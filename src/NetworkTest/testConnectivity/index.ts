@@ -127,15 +127,21 @@ function checkCreateLocalPublisher(
           insertMode: 'append',
           showControls: false,
         };
-        if (options && options.audioOnly) {
-          publisherOptions.videoSource = null;
-        }
+
         if (!Object.keys(availableDevices.audio).length) {
           publisherOptions.audioSource = null;
+        } else if (options && options.audioDeviceId && availableDevices.audio[options.audioDeviceId]) {
+          publisherOptions.audioSource = options.audioDeviceId;
         }
         if (!Object.keys(availableDevices.video).length) {
           publisherOptions.videoSource = null;
+        } else if (options && options.videoDeviceId && availableDevices.video[options.videoDeviceId]) {
+          publisherOptions.videoSource = options.videoDeviceId;
         }
+        if (options && options.audioOnly) {
+          publisherOptions.videoSource = null;
+        }
+
         const publisher = OT.initPublisher(publisherDiv, publisherOptions, (error?: OT.OTError) => {
           if (!error) {
             resolve({ publisher });
