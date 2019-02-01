@@ -128,6 +128,8 @@ function checkCreateLocalPublisher(
           showControls: false,
         };
 
+        console.log('test connectivity - check create local publisher');
+
         // if (!Object.keys(availableDevices.audio).length) {
         //   publisherOptions.audioSource = null;
         // } else if (options && options.audioDeviceId && availableDevices.audio[options.audioDeviceId]) {
@@ -152,8 +154,10 @@ function checkCreateLocalPublisher(
 
         const publisher = OT.initPublisher(publisherDiv, publisherOptions, (error?: OT.OTError) => {
           if (!error) {
+            console.log('test connectivity - check create local no error');
             resolve({ publisher });
           } else {
+            console.log('test connectivity - check create local publisher - error');
             reject(new e.FailedToCreateLocalPublisher());
           }
         });
@@ -172,6 +176,8 @@ function checkPublishToSession(
   OT: OT.Client, session: OT.Session,
   options?: NetworkTestOptions,
 ): Promise<PublishToSessionResults> {
+  console.log('test connectivity - check publish to session');
+
   return new Promise((resolve, reject) => {
     const disconnectAndReject = (rejectError: Error) => {
       disconnectFromSession(session).then(() => {
@@ -298,6 +304,7 @@ export function testConnectivity(
       }
     };
 
+    console.log('test connectivity - function 2');
     connectToSession(OT, credentials)
       .then((session: OT.Session) => checkPublishToSession(OT, session, options))
       .then(checkSubscribeToSession)

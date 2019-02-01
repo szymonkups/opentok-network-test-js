@@ -89,6 +89,7 @@ export default class NetworkTest {
    */
   testConnectivity(): Promise<ConnectivityTestResults> {
     this.otLogging.logEvent({ action: 'testConnectivity', variation: 'Attempt' });
+    console.log('test connectivity - main function');
     return testConnectivity(this.OT, this.credentials, this.otLogging, this.options);
   }
 
