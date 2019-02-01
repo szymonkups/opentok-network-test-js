@@ -112,8 +112,8 @@ function checkCreateLocalPublisher(
   options?: NetworkTestOptions,
 ): Promise<CreateLocalPublisherResults> {
   return new Promise((resolve, reject) => {
-    validateDevices(OT)
-      .then((availableDevices: AvailableDevices) => {
+    Promise.resolve()
+      .then(() => {
         const publisherDiv = document.createElement('div');
         publisherDiv.style.position = 'fixed';
         publisherDiv.style.bottom = '-1px';
@@ -128,18 +128,26 @@ function checkCreateLocalPublisher(
           showControls: false,
         };
 
-        if (!Object.keys(availableDevices.audio).length) {
-          publisherOptions.audioSource = null;
-        } else if (options && options.audioDeviceId && availableDevices.audio[options.audioDeviceId]) {
-          publisherOptions.audioSource = options.audioDeviceId;
-        }
-        if (!Object.keys(availableDevices.video).length) {
-          publisherOptions.videoSource = null;
-        } else if (options && options.videoDeviceId && availableDevices.video[options.videoDeviceId]) {
+        // if (!Object.keys(availableDevices.audio).length) {
+        //   publisherOptions.audioSource = null;
+        // } else if (options && options.audioDeviceId && availableDevices.audio[options.audioDeviceId]) {
+        //   publisherOptions.audioSource = options.audioDeviceId;
+        // }
+        // if (!Object.keys(availableDevices.video).length) {
+        //   publisherOptions.videoSource = null;
+        // } else if (options && options.videoDeviceId && availableDevices.video[options.videoDeviceId]) {
+        //   publisherOptions.videoSource = options.videoDeviceId;
+        // }
+        // if (options && options.audioOnly) {
+        //   publisherOptions.videoSource = null;
+        // }
+
+        if (options && options.videoDeviceId) {
           publisherOptions.videoSource = options.videoDeviceId;
         }
-        if (options && options.audioOnly) {
-          publisherOptions.videoSource = null;
+
+        if (options && options.audioDeviceId) {
+          publisherOptions.audioSource = options.audioDeviceId;
         }
 
         const publisher = OT.initPublisher(publisherDiv, publisherOptions, (error?: OT.OTError) => {
