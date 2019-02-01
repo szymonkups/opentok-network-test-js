@@ -211,6 +211,7 @@ function checkPublishToSession(
  */
 function checkSubscribeToSession({ session, publisher }: PublishToSessionResults): Promise<SubscribeToSessionResults> {
   return new Promise((resolve, reject) => {
+    console.log('check subscribe to session');
     const config = { testNetwork: true, audioVolume: 0 };
     const disconnectAndReject = (rejectError: Error) => {
       disconnectFromSession(session).then(() => {
@@ -237,6 +238,7 @@ function checkSubscribeToSession({ session, publisher }: PublishToSessionResults
  */
 function checkLoggingServer(OT: OT.Client, input?: SubscribeToSessionResults): Promise<SubscribeToSessionResults> {
   return new Promise((resolve, reject) => {
+    console.log('check subscribe logging server');
     const url = `${getOr('', 'properties.loggingURL', OT)}/logging/ClientEvent`;
     const handleError = () => reject(new e.LoggingServerConnectionError());
 
