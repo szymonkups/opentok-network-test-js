@@ -109,7 +109,6 @@ function validateDevices(OT: OT.Client): Promise<AvailableDevices> {
 function publishAndSubscribe(OT: OT.Client, options: NetworkTestOptions) {
   return (session: OT.Session): Promise<OT.Subscriber> =>
     new Promise((resolve, reject) => {
-      let publisherOptions: OT.PublisherProperties;
       type StreamCreatedEvent = OT.Event<'streamCreated', OT.Publisher> & { stream: OT.Stream };
       const containerDiv = document.createElement('div');
       containerDiv.style.position = 'fixed';
@@ -123,7 +122,7 @@ function publishAndSubscribe(OT: OT.Client, options: NetworkTestOptions) {
           if (!Object.keys(availableDevices.video).length) {
             audioOnly = true;
           }
-          let publisherOptions: OT.PublisherProperties = {
+          const publisherOptions: OT.PublisherProperties = {
             resolution: '1280x720',
             width: '100%',
             height: '100%',
