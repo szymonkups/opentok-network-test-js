@@ -106,7 +106,7 @@ function validateDevices(OT: OT.Client): Promise<AvailableDevices> {
 /**
  * Create a test publisher and subscribe to the publihser's stream
  */
-function publishAndSubscribe(OT: OT.Client, options: NetworkTestOptions) {
+function publishAndSubscribe(OT: OT.Client, options?: NetworkTestOptions) {
   return (session: OT.Session): Promise<OT.Subscriber> =>
     new Promise((resolve, reject) => {
       type StreamCreatedEvent = OT.Event<'streamCreated', OT.Publisher> & { stream: OT.Stream };
@@ -119,24 +119,26 @@ function publishAndSubscribe(OT: OT.Client, options: NetworkTestOptions) {
       document.body.appendChild(containerDiv);
       validateDevices(OT)
         .then((availableDevices: AvailableDevices) => {
-          if (!Object.keys(availableDevices.video).length) {
-            audioOnly = true;
-          }
+
           const publisherOptions: OT.PublisherProperties = {
             resolution: '1280x720',
             width: '100%',
             height: '100%',
             insertMode: 'append',
             showControls: false,
-            videoSource: options.videoDeviceId,
-            audioSource: options.audioDeviceId,
           };
 
-          if (audioOnly) {
-            publisherOptions.videoSource = null;
+          if (!Object.keys(availableDevices.audio).length) {
+            publisherOptions.audioSource = null;
+          } else if (options && options.audioDeviceId && availableDevices.audio[options.audioDeviceId]) {
+            publisherOptions.audioSource = options.audioDeviceId;
           }
 
-          console.log('audio and video set', options.videoDeviceId, options. audioDeviceId, publisherOptions);
+          if (!Object.keys(availableDevices.video).length) {
+            publisherOptions.videoSource = null;
+          } else if (options && options.videoDeviceId && availableDevices.video[options.videoDeviceId]) {
+            publisherOptions.videoSource = options.videoDeviceId;
+          }
 
           const publisher = OT.initPublisher(containerDiv, publisherOptions, (error?: OT.OTError) => {
             if (error) {
@@ -178,7 +180,7 @@ function subscribeToTestStream(
   OT: OT.Client,
   session: OT.Session,
   credentials: OT.SessionCredentials,
-  options: NetworkTestOptions): Promise<OT.Subscriber> {
+  options?: NetworkTestOptions): Promise<OT.Subscriber> {
   return new Promise((resolve, reject) => {
     connectToSession(session, credentials.token)
       .then(publishAndSubscribe(OT, options))
@@ -209,7 +211,7 @@ function checkSubscriberQuality(
   OT: OT.Client,
   session: OT.Session,
   credentials: OT.SessionCredentials,
-  options: NetworkTestOptions,
+  options?: NetworkTestOptions,
   onUpdate?: UpdateCallback<OT.SubscriberStats>,
   audioOnlyFallback?: boolean,
 ): Promise<QualityTestResults> {
@@ -289,7 +291,6 @@ function checkSubscriberQuality(
  */
 function validateBrowser(): Promise<void> {
   return new Promise((resolve, reject) => {
-    console.log('validate browser');
     const { supported, browser } = isSupportedBrowser();
     return supported ? resolve() : reject(new e.UnsupportedBrowserError(browser));
   });
@@ -302,7 +303,7 @@ export function testQuality(
   OT: OT.Client,
   credentials: OT.SessionCredentials,
   otLogging: OTKAnalytics,
-  options: NetworkTestOptions,
+  options?: NetworkTestOptions,
   onUpdate?: UpdateCallback<UpdateCallbackStats>,
 ): Promise<QualityTestResults> {
   stopTestTimeoutCompleted = false;

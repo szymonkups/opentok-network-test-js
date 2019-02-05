@@ -39,13 +39,13 @@ export default class NetworkTest {
   credentials: OT.SessionCredentials;
   OT: OT.Client;
   otLogging: OTKAnalytics;
-  options: NetworkTestOptions;
+  options?: NetworkTestOptions;
 
   /**
    * Returns an instance of NetworkConnectivity. See the "API reference" section of the
    * README.md file in the root of the opentok-network-test-js project for details.
    */
-  constructor(OT: OT.Client, credentials: OT.SessionCredentials, options: NetworkTestOptions) {
+  constructor(OT: OT.Client, credentials: OT.SessionCredentials, options?: NetworkTestOptions) {
     this.validateOT(OT);
     this.validateCredentials(credentials);
     this.otLogging = this.startLoggingEngine(credentials.apiKey, credentials.sessionId);

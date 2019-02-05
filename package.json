@@ -5,7 +5,6 @@
   "main": "dist/NetworkTest/index.js",
   "types": "dist/NetworkTest/index.d.ts",
   "scripts": {
-    "postinstall": "npm i && npm run build",
     "build": "rm -rf dist && webpack --config webpack.config.js",
     "test-setup": "node test/setup/setup.js",
     "test-teardown": "rm test/credentials.json",

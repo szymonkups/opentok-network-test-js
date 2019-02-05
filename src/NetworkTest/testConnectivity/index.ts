@@ -112,8 +112,8 @@ function checkCreateLocalPublisher(
   options?: NetworkTestOptions,
 ): Promise<CreateLocalPublisherResults> {
   return new Promise((resolve, reject) => {
-    Promise.resolve()
-      .then(() => {
+    validateDevices(OT)
+      .then((availableDevices) => {
         const publisherDiv = document.createElement('div');
         publisherDiv.style.position = 'fixed';
         publisherDiv.style.bottom = '-1px';
@@ -128,36 +128,26 @@ function checkCreateLocalPublisher(
           showControls: false,
         };
 
-        console.log('test connectivity - check create local publisher');
+        if (!Object.keys(availableDevices.audio).length) {
+          publisherOptions.audioSource = null;
+        } else if (options && options.audioDeviceId && availableDevices.audio[options.audioDeviceId]) {
+          publisherOptions.audioSource = options.audioDeviceId;
+        }
 
-        // if (!Object.keys(availableDevices.audio).length) {
-        //   publisherOptions.audioSource = null;
-        // } else if (options && options.audioDeviceId && availableDevices.audio[options.audioDeviceId]) {
-        //   publisherOptions.audioSource = options.audioDeviceId;
-        // }
-        // if (!Object.keys(availableDevices.video).length) {
-        //   publisherOptions.videoSource = null;
-        // } else if (options && options.videoDeviceId && availableDevices.video[options.videoDeviceId]) {
-        //   publisherOptions.videoSource = options.videoDeviceId;
-        // }
-        // if (options && options.audioOnly) {
-        //   publisherOptions.videoSource = null;
-        // }
-
-        if (options && options.videoDeviceId) {
+        if (!Object.keys(availableDevices.video).length) {
+          publisherOptions.videoSource = null;
+        } else if (options && options.videoDeviceId && availableDevices.video[options.videoDeviceId]) {
           publisherOptions.videoSource = options.videoDeviceId;
         }
 
-        if (options && options.audioDeviceId) {
-          publisherOptions.audioSource = options.audioDeviceId;
+        if (options && options.audioOnly) {
+          publisherOptions.videoSource = null;
         }
 
         const publisher = OT.initPublisher(publisherDiv, publisherOptions, (error?: OT.OTError) => {
           if (!error) {
-            console.log('test connectivity - check create local no error');
             resolve({ publisher });
           } else {
-            console.log('test connectivity - check create local publisher - error');
             reject(new e.FailedToCreateLocalPublisher());
           }
         });
@@ -176,8 +166,6 @@ function checkPublishToSession(
   OT: OT.Client, session: OT.Session,
   options?: NetworkTestOptions,
 ): Promise<PublishToSessionResults> {
-  console.log('test connectivity - check publish to session');
-
   return new Promise((resolve, reject) => {
     const disconnectAndReject = (rejectError: Error) => {
       disconnectFromSession(session).then(() => {
@@ -211,7 +199,6 @@ function checkPublishToSession(
  */
 function checkSubscribeToSession({ session, publisher }: PublishToSessionResults): Promise<SubscribeToSessionResults> {
   return new Promise((resolve, reject) => {
-    console.log('check subscribe to session');
     const config = { testNetwork: true, audioVolume: 0 };
     const disconnectAndReject = (rejectError: Error) => {
       disconnectFromSession(session).then(() => {
@@ -238,7 +225,6 @@ function checkSubscribeToSession({ session, publisher }: PublishToSessionResults
  */
 function checkLoggingServer(OT: OT.Client, input?: SubscribeToSessionResults): Promise<SubscribeToSessionResults> {
   return new Promise((resolve, reject) => {
-    console.log('check subscribe logging server');
     const url = `${getOr('', 'properties.loggingURL', OT)}/logging/ClientEvent`;
     const handleError = () => reject(new e.LoggingServerConnectionError());
 
@@ -306,7 +292,6 @@ export function testConnectivity(
       }
     };
 
-    console.log('test connectivity - function 2');
     connectToSession(OT, credentials)
       .then((session: OT.Session) => checkPublishToSession(OT, session, options))
       .then(checkSubscribeToSession)
