@@ -1,6 +1,6 @@
 {
   "name": "@szymonkups-forks/opentok-network-test",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "description": "Precall network test for applications using the OpenTok platform.",
   "main": "dist/NetworkTest/index.js",
   "types": "dist/NetworkTest/index.d.ts",
@@ -11,6 +11,11 @@
     "karma": "karma start",
     "test": "npm run test-setup && npm run karma && npm run test-teardown"
   },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/opentok/opentok-network-test-js.git"

@@ -130,11 +130,15 @@ function publishAndSubscribe(OT: OT.Client, options?: NetworkTestOptions) {
 
           if (!Object.keys(availableDevices.audio).length) {
             publisherOptions.audioSource = null;
-          } else if (options && options.audioDeviceId && availableDevices.audio[options.audioDeviceId]) {
+          } else if (options && options.audioDeviceId === false) {
+            publisherOptions.audioSource = null;
+          }else if (options && options.audioDeviceId && availableDevices.audio[options.audioDeviceId]) {
             publisherOptions.audioSource = options.audioDeviceId;
           }
 
           if (!Object.keys(availableDevices.video).length) {
+            publisherOptions.videoSource = null;
+          } else if (options && options.videoDeviceId === false) {
             publisherOptions.videoSource = null;
           } else if (options && options.videoDeviceId && availableDevices.video[options.videoDeviceId]) {
             publisherOptions.videoSource = options.videoDeviceId;
